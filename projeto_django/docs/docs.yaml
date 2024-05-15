@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: Documentação da API
+  description: Documentação da API utilizando OpenAPI 3.0
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/
+    description: Servidor de Desenvolvimento
+tags:
+  - name: API de gerenciamento de estudantes
+    description: Endpoints para gerenciamento de estudantes
+  - name: Cadastro e Autenticação
+    description: Endpoints para cadastro de usuários e autenticação
+paths:
+  /api/token/:
+    post:
+      summary: Gera um token de autenticação
+      tags: [Cadastro e Autenticação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Falha na autenticação
+  /api/create-user/:
+    post:
+      summary: Cria um novo usuário
+      tags: [Cadastro e Autenticação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+        '400':
+          description: Requisição inválida
+  /api/list-student/:
+    get:
+      summary: Retorna a lista de alunos
+      tags: [API de gerenciamento de estudantes]
+      parameters:
+        - in: query
+          name: nome
+          schema:
+            type: string
+          description: Filtra os alunos pelo nome
+        - in: query
+          name: curso
+          schema:
+            type: string
+          description: Filtra os alunos pelo curso
+        - in: query
+          name: data_nascimento
+          schema:
+            type: string
+            format: date
+          description: Filtra os alunos pela data de nascimento
+      responses:
+        '200':
+          description: Lista de alunos recuperada com sucesso
+          
+  /api/create-student/:
+    post:
+      summary: Cria um novo aluno
+      tags: [API de gerenciamento de estudantes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Aluno criado com sucesso
+        '400':
+          description: Requisição inválida
+  /api/student/{id}/:
+    get:
+      summary: Retorna os detalhes de um aluno específico
+      tags: [API de gerenciamento de estudantes]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID do aluno
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do aluno recuperados com sucesso
+        '404':
+          description: Aluno não encontrado
+    put:
+      summary: Atualiza os detalhes de um aluno específico
+      tags: [API de gerenciamento de estudantes]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID do aluno
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Detalhes do aluno atualizados com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Aluno não encontrado
+    delete:
+      summary: Exclui um aluno específico
+      tags: [API de gerenciamento de estudantes]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID do aluno
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Aluno excluído com sucesso
+        '404':
+          description: Aluno não encontrado
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        nome:
+          type: string
+        curso:
+          type: string
+        matricula:
+          type: string
+        data_nascimento:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+        telefone:
+          type: string
+        data_ingresso:
+          type: string
+          format: date
